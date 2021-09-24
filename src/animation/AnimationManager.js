@@ -1,16 +1,14 @@
 /**
  * @author peterqliu / https://github.com/peterqliu
  * @author jscastro / https://github.com/jscastro76
-*/
+ */
 const THREE = require('../three.js');
 const utils = require("../utils/utils.js");
 
 function AnimationManager(map) {
-
-    this.map = map
-    this.enrolledObjects = [];    
-    this.previousFrameTime;
-
+	this.map = map
+	this.enrolledObjects = [];
+	this.previousFrameTime;
 };
 
 AnimationManager.prototype = {
@@ -20,6 +18,7 @@ AnimationManager.prototype = {
 	},
 
 	enroll: function (obj) {
+		const thizz = this;
 
 		//[jscastro] add the object default animations
 		obj.clock = new THREE.Clock();
@@ -107,9 +106,9 @@ AnimationManager.prototype = {
 
 					options.endState.rotation = utils.types.rotation(options.rotation, options.startRotation);
 					options.rotationPerMs = options.endState.rotation
-						.map(function (angle, index) {
-							return (angle - options.startRotation[index]) / options.duration;
-						})
+																				 .map(function (angle, index) {
+																					 return (angle - options.startRotation[index]) / options.duration;
+																				 })
 				}
 
 				if (scaling) {
@@ -118,9 +117,9 @@ AnimationManager.prototype = {
 					options.endState.scale = utils.types.scale(options.scale, options.startScale);
 
 					options.scalePerMs = options.endState.scale
-						.map(function (scale, index) {
-							return (scale - options.startScale[index]) / options.duration;
-						})
+																			.map(function (scale, index) {
+																				return (scale - options.startScale[index]) / options.duration;
+																			})
 				}
 
 				if (translating) options.pathCurve = new THREE.CatmullRomCurve3(utils.lnglatsToWorld([obj.coordinates, options.coords]));
@@ -131,9 +130,9 @@ AnimationManager.prototype = {
 				}
 
 				this.animationQueue
-					.push(entry);
+						.push(entry);
 
-				tb.map.repaint = true;
+				thizz.map.repaint = true;
 			}
 
 			//if no duration set, stop object's existing animations and go to that state immediately
@@ -156,7 +155,7 @@ AnimationManager.prototype = {
 				obj.isPlaying = false;
 				cancelAnimationFrame(obj.animationMethod);
 			}
-			//TODO: if this is removed, it produces an error in 
+			//TODO: if this is removed, it produces an error in
 			this.animationQueue = [];
 			return this;
 		}
@@ -169,21 +168,21 @@ AnimationManager.prototype = {
 			};
 
 			utils.extend(
-				entry.parameters,
-				{
-					pathCurve: new THREE.CatmullRomCurve3(
-						utils.lnglatsToWorld(options.path)
-					),
-					start: Date.now(),
-					expiration: Date.now() + entry.parameters.duration,
-					cb: cb
-				}
+					entry.parameters,
+					{
+						pathCurve: new THREE.CatmullRomCurve3(
+								utils.lnglatsToWorld(options.path)
+						),
+						start: Date.now(),
+						expiration: Date.now() + entry.parameters.duration,
+						cb: cb
+					}
 			);
 
 			this.animationQueue
-				.push(entry);
+					.push(entry);
 
-			tb.map.repaint = true;
+			thizz.map.repaint = true;
 
 			return this;
 		};
@@ -244,14 +243,13 @@ AnimationManager.prototype = {
 				this.position.copy(w);
 				let p = utils.unprojectFromWorld(w);
 				this.coordinates = options.position = p;
-			} 
+			}
 
 			//Each time the object is positioned, project the floor and correct shadow plane
 			this.setBoundingBoxShadowFloor();
 			this.setReceiveShadowFloor();
-
 			this.updateMatrixWorld();
-			tb.map.repaint = true;
+			thizz.map.repaint = true;
 
 			//const threeTarget = new THREE.EventDispatcher();
 			//threeTarget.dispatchEvent({ type: 'event', detail: { object: this, action: { position: options.position, rotation: options.rotation, scale: options.scale } } });
@@ -281,9 +279,9 @@ AnimationManager.prototype = {
 				};
 
 				this.animationQueue
-					.push(entry);
+						.push(entry);
 
-				tb.map.repaint = true
+				thizz.map.repaint = true
 				return this;
 			}
 		}
@@ -343,7 +341,7 @@ AnimationManager.prototype = {
 				// Update the animation mixer and render this frame
 				obj.mixer.update(0.01);
 			}
-			tb.map.repaint = true;
+			thizz.map.repaint = true;
 			return this;
 		}
 
@@ -432,15 +430,15 @@ AnimationManager.prototype = {
 						if (options.trackHeading) {
 
 							let tangent = options.pathCurve
-								.getTangentAt(timeProgress)
-								.normalize();
+																	 .getTangentAt(timeProgress)
+																	 .normalize();
 
 							let axis = new THREE.Vector3(0, 0, 0);
 							let up = new THREE.Vector3(0, 1, 0);
 
 							axis
-								.crossVectors(up, tangent)
-								.normalize();
+							.crossVectors(up, tangent)
+							.normalize();
 
 							let radians = Math.acos(up.dot(tangent));
 
@@ -458,7 +456,7 @@ AnimationManager.prototype = {
 						object.isPlaying = true;
 						object.animationMethod = requestAnimationFrame(this.update);
 						object.mixer.update(object.clock.getDelta());
-						tb.map.repaint = true;
+						this.map.repaint = true;
 					}
 
 				}
@@ -472,10 +470,10 @@ AnimationManager.prototype = {
 }
 
 const defaults = {
-    followPath: {
-        path: null,
-        duration: 1000,
-        trackHeading: true
-    }
+	followPath: {
+		path: null,
+		duration: 1000,
+		trackHeading: true
+	}
 }
 module.exports = exports = AnimationManager;

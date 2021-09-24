@@ -23,7 +23,7 @@ const BuildingShadows = require("./objects/effects/BuildingShadows.js");
 
 function Threebox(map, glContext, options){
 
-    this.init(map, glContext, options);
+	this.init(map, glContext, options);
 
 };
 
@@ -179,8 +179,8 @@ Threebox.prototype = {
 			this.unselectFeature = function (f) {
 				if (typeof f.id == 'undefined') return;
 				this.setFeatureState(
-					{ source: f.source, sourceLayer: f.sourceLayer, id: f.id },
-					{ select: false }
+						{ source: f.source, sourceLayer: f.sourceLayer, id: f.id },
+						{ select: false }
 				);
 
 				this.removeTooltip(f);
@@ -194,8 +194,8 @@ Threebox.prototype = {
 			this.selectFeature = function(f) {
 				this.selectedFeature = f;
 				this.setFeatureState(
-					{ source: this.selectedFeature.source, sourceLayer: this.selectedFeature.sourceLayer, id: this.selectedFeature.id },
-					{ select: true }
+						{ source: this.selectedFeature.source, sourceLayer: this.selectedFeature.sourceLayer, id: this.selectedFeature.id },
+						{ select: true }
 				);
 				this.selectedFeature = this.queryRenderedFeatures({ layers: [this.selectedFeature.layer.id], filter: ["==", ['id'], this.selectedFeature.id] })[0];
 				this.addTooltip(this.selectedFeature);
@@ -207,8 +207,8 @@ Threebox.prototype = {
 			this.outFeature = function(f) {
 				if (this.overedFeature && typeof this.overedFeature != 'undefined' && this.overedFeature.id != f) {
 					map.setFeatureState(
-						{ source: this.overedFeature.source, sourceLayer: this.overedFeature.sourceLayer, id: this.overedFeature.id },
-						{ hover: false }
+							{ source: this.overedFeature.source, sourceLayer: this.overedFeature.sourceLayer, id: this.overedFeature.id },
+							{ hover: false }
 					);
 					this.removeTooltip(this.overedFeature);
 					this.overedFeature = null;
@@ -334,9 +334,9 @@ Threebox.prototype = {
 					// Set a UI indicator for dragging.
 					this.getCanvasContainer().style.cursor = 'move';
 					var minX = Math.min(start.x, current.x),
-						maxX = Math.max(start.x, current.x),
-						minY = Math.min(start.y, current.y),
-						maxY = Math.max(start.y, current.y);
+							maxX = Math.max(start.x, current.x),
+							minY = Math.min(start.y, current.y),
+							maxY = Math.max(start.y, current.y);
 					//set the movement fluid we rotate only every 10px moved, in steps of 10 degrees up to 360
 					let rotation = { x: 0, y: 0, z: (Math.round(rotationDiff[2] + (~~((current.x - start.x) / this.tb.rotationStep) % 360 * this.tb.rotationStep) % 360)) };
 					//now rotate the model depending the axis
@@ -420,8 +420,8 @@ Threebox.prototype = {
 								this.getCanvasContainer().style.cursor = 'pointer';
 								this.overedFeature = features[0];
 								this.setFeatureState(
-									{ source: this.overedFeature.source, sourceLayer: this.overedFeature.sourceLayer, id: this.overedFeature.id },
-									{ hover: true }
+										{ source: this.overedFeature.source, sourceLayer: this.overedFeature.sourceLayer, id: this.overedFeature.id },
+										{ hover: true }
 								);
 								this.overedFeature = map.queryRenderedFeatures({ layers: [this.overedFeature.layer.id], filter: ["==", ['id'], this.overedFeature.id] })[0];
 								this.addTooltip(this.overedFeature);
@@ -709,36 +709,36 @@ Threebox.prototype = {
 		this.setDefaultView(options, this.options);
 		if (options.clone === false) {
 			return new Promise(
-				async (resolve) => {
-					loader(options, cb, async (obj) => {
-						resolve(obj);
+					async (resolve) => {
+						loader(this.map, options, cb, async (obj) => {
+							resolve(obj);
+						});
 					});
-				});
 		}
 		else {
 			//[jscastro] new added cache for 3D Objects
 			let cache = this.objectsCache.get(options.obj);
 			if (cache) {
 				cache.promise
-					.then(obj => {
-						cb(obj.duplicate(options));
-					})
-					.catch(err => {
-						this.objectsCache.delete(options.obj);
-						console.error("Could not load model file: " + options.obj);
-					});
+						 .then(obj => {
+							 cb(obj.duplicate(options));
+						 })
+						 .catch(err => {
+							 this.objectsCache.delete(options.obj);
+							 console.error("Could not load model file: " + options.obj);
+						 });
 			} else {
 				this.objectsCache.set(options.obj, {
 					promise: new Promise(
-						async (resolve, reject) => {
-							loader(options, cb, async (obj) => {
-								if (obj.duplicate) {
-									resolve(obj.duplicate());
-								} else {
-									reject(obj);
-								}
-							});
-						})
+							async (resolve, reject) => {
+								loader(this.map, options, cb, async (obj) => {
+									if (obj.duplicate) {
+										resolve(obj.duplicate());
+									} else {
+										reject(obj);
+									}
+								});
+							})
 				});
 
 			}
@@ -901,7 +901,7 @@ Threebox.prototype = {
 		var timestamp = Date.now();
 
 		// Update any animations
-		this.objects.animationManager.update(timestamp);
+		this.objects.animationManager?.update(timestamp);
 
 		this.updateLightHelper();
 
@@ -1057,7 +1057,7 @@ Threebox.prototype = {
 		if (!sunPos) {
 			var center = this.map.getCenter();
 			sunPos = this.getSunPosition(
-				date || Date.now(), [center.lng, center.lat]
+					date || Date.now(), [center.lng, center.lat]
 			);
 		}
 		var sunAzimuth = 180 + (sunPos.azimuth * 180) / Math.PI;
@@ -1096,18 +1096,18 @@ Threebox.prototype = {
 
 		return new Promise((resolve) => {
 			resolve(
-				this.clear(null, true).then((resolve) => {
-					// this.map.remove();
-					// this.map = {};
-					this.scene.remove(this.world);
-					this.world.children = [];
-					this.world = null;
-					this.objectsCache.clear();
-					this.labelRenderer.dispose();
-					// console.log(this.memory());
-					this.renderer.dispose();
-					return resolve;
-				})
+					this.clear(null, true).then((resolve) => {
+						// this.map.remove();
+						// this.map = {};
+						this.scene.remove(this.world);
+						this.world.children = [];
+						this.world = null;
+						this.objectsCache.clear();
+						this.labelRenderer.dispose();
+						// console.log(this.memory());
+						this.renderer.dispose();
+						return resolve;
+					})
 			);
 			//console.log(window.performance.memory);
 		});
