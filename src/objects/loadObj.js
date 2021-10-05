@@ -76,6 +76,15 @@ function loadObj(map, options, cb, promise) {
 			const s = utils.types.scale(options.scale, [1, 1, 1]);
 			obj.rotation.set(r[0], r[1], r[2]);
 			obj.scale.set(s[0], s[1], s[2]);
+
+			if (options.material) {
+				obj.traverse(o => {
+					if (o.isMesh) {
+						Object.keys(options.material).forEach(x => o.material[x] = options.material[x])
+					}
+				})
+			}
+
 			// [jscastro] normalize specular/metalness/shininess from meshes in FBX and GLB model as it would need 5 lights to illuminate them properly
 			if (options.normalize) { normalizeSpecular(obj); }
 			obj.name = "model";
