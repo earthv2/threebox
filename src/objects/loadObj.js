@@ -9,11 +9,14 @@ const MTLLoader = require("./loaders/MTLLoader.js");
 const FBXLoader = require("./loaders/FBXLoader.js");
 const GLTFLoader = require("./loaders/GLTFLoader.js");
 const ColladaLoader = require("./loaders/ColladaLoader.js");
+const MeshoptDecoder = require("./meshopt/meshopt_decoder.js")
 const objLoader = new OBJLoader();
 const materialLoader = new MTLLoader();
 const gltfLoader = new GLTFLoader();
 const fbxLoader = new FBXLoader();
 const daeLoader = new ColladaLoader();
+
+gltfLoader.setMeshoptDecoder(MeshoptDecoder)
 
 function loadObj(map, options, cb, promise) {
 
