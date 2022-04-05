@@ -900,7 +900,7 @@ Threebox.prototype = {
 		var timestamp = Date.now();
 
 		// Update any animations
-		this.objects.animationManager?.update(timestamp);
+		if (this.objects.animationManager) this.objects.animationManager.update(timestamp);
 
 		this.updateLightHelper();
 

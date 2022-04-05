@@ -4249,7 +4249,6 @@ function loadObj(map, options, cb, promise) {
 		}
 
 		loader.load(options.obj, obj => {
-
 			//[jscastro] MTL/GLTF/FBX models have a different structure
 			let animations = [];
 			switch (options.type) {
@@ -4260,6 +4259,7 @@ function loadObj(map, options, cb, promise) {
 				case "glb":
 				case "dae":
 					animations = obj.animations;
+					obj.scene.userData = JSON.parse(JSON.stringify(obj.asset ?? {}))
 					obj = obj.scene;
 					break;
 				case "fbx":

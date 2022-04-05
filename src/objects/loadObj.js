@@ -66,7 +66,7 @@ function loadObj(map, options, cb, promise) {
 				case "glb":
 				case "dae":
 					animations = obj.animations;
-					obj.scene.userData = JSON.parse(JSON.stringify(obj.asset ?? {}))
+					if (obj.asset) obj.scene.userData = JSON.parse(JSON.stringify(obj.asset))
 					obj = obj.scene;
 					break;
 				case "fbx":
