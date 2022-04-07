@@ -10,6 +10,7 @@ const FBXLoader = require("./loaders/FBXLoader.js");
 const GLTFLoader = require("./loaders/GLTFLoader.js");
 const ColladaLoader = require("./loaders/ColladaLoader.js");
 const MeshoptDecoder = require("./meshopt/meshopt_decoder.js")
+const THREE = require('../three')
 const objLoader = new OBJLoader();
 const materialLoader = new MTLLoader();
 const gltfLoader = new GLTFLoader();
@@ -86,6 +87,35 @@ function loadObj(map, options, cb, promise) {
 						Object.keys(options.material).forEach(x => o.material[x] = options.material[x])
 					}
 				})
+			} else if (options.newMaterial) {
+				let newMat = null
+				if (options.newMaterial.type === 'MeshBasicMaterial') {
+					newMat = new THREE.MeshBasicMaterial(options.newMaterial.options)
+				}
+
+				if (options.newMaterial.type === 'MeshPhongMaterial') {
+					newMat = new THREE.MeshPhongMaterial(options.newMaterial.options)
+				}
+
+				if (options.newMaterial.type === 'MeshPhysicalMaterial') {
+					newMat = new THREE.MeshPhysicalMaterial(options.newMaterial.options)
+				}
+
+				if (options.newMaterial.type === 'MeshStandardMaterial') {
+					newMat = new THREE.MeshStandardMaterial(options.newMaterial.options)
+				}
+
+				if (options.newMaterial.type === 'MeshToonMaterial') {
+					newMat = new THREE.MeshToonMaterial(options.newMaterial.options)
+				}
+
+				if (newMat) {
+					obj.children.forEach(x => {
+						if (x.isMesh) {
+							x.material = newMat
+						}
+					})
+				}
 			}
 
 			// [jscastro] normalize specular/metalness/shininess from meshes in FBX and GLB model as it would need 5 lights to illuminate them properly
